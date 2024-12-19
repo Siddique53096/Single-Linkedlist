@@ -1,0 +1,370 @@
+/////////////////////// Node.h ////////////////////////
+
+
+class Node
+{
+private:
+	int data;
+	Node* next;
+	Node* prev;
+
+public:
+	Node();
+	Node(int);
+	void setData(int);
+	void setNext(Node*);
+	void setPrev(Node*);
+	int getData();
+	Node* getNext();
+	Node* getPrev();
+
+
+};
+
+
+
+//////////////////////////// Linklist.h //////////////////////////
+
+
+
+#include"Node.h"
+
+class Linklist
+
+{
+private:
+	Node* head;
+	Node* tail;
+public:
+	Linklist(); // perametarice constructor bhi ho sakata ha ider lakin hum abhi defalut use kar rahe hai
+	bool isEmpty();
+	void insertAtHead(int);
+	void insertAtTail(int);
+	void printForward();
+	void printBackward();
+	void insertAtTarget(int, int);
+	Node* searchtarget(int);
+	void removeNode(int);
+
+};
+
+
+///////////////////////////////// implementation.cpp ////////////////////////////
+
+
+#include"Linklist.h"
+#include<iostream>
+
+using namespace std;
+//////////////////////////////////////////// Node Class ////////////////////////////////////////////
+
+Node::Node()
+{
+    data = -1;
+    next = NULL;
+    prev = NULL;
+}
+
+Node::Node(int data)
+{
+    this->data = data;
+    next = NULL;
+    prev = NULL;
+}
+
+
+void Node::setData(int data)
+{
+    this->data = data;
+}
+
+void Node::setNext(Node* next)
+{
+    this->next = next;
+}
+
+void Node::setPrev(Node* prev)
+{
+    this->prev = prev;
+}
+
+int Node::getData()
+{
+    return data;
+}
+
+Node* Node::getNext()
+{
+    return next;
+}
+
+
+Node* Node::getPrev()
+{
+    return prev;
+}
+
+//////////////////////////////////////////// Linklist ////////////////////////////////////////////
+Linklist::Linklist()
+{
+    head = NULL;
+    tail = NULL;
+}
+
+bool Linklist::isEmpty()
+{
+    return head == NULL;
+}
+
+void Linklist::insertAtTail(int data)
+{
+    Node* temp = new Node(data);
+    if (isEmpty())
+    {
+        head = temp;
+        tail = temp;
+    }
+    else
+    {
+        tail->setNext(temp);
+        temp->setPrev(tail);
+        tail = temp;
+    }
+}
+
+void Linklist::insertAtHead(int data)
+{
+    Node* temp = new Node(data);
+    if (isEmpty())
+    {
+        head = temp;
+        tail = temp;
+    }
+    else
+    {
+        temp->setNext(head);
+        head->setPrev(temp);
+        head = temp;
+    }
+}
+
+void Linklist::printForward()
+{
+    Node* temp = head;
+    if (temp == NULL) {
+        cout << "The list is empty." << endl;
+        return;
+    }
+    while (temp != NULL)
+    {
+        cout << temp->getData() << "\t";
+        temp = temp->getNext();
+    }
+    cout << endl;
+}
+
+void Linklist::printBackward() {
+    Node* temp = tail;
+    if (temp == NULL) {
+        cout << "The list is empty." << endl;
+        return;
+    }
+    while (temp != NULL) {
+        cout << temp->getData() << "\t";
+        temp = temp->getPrev();
+    }
+    cout << endl;
+}
+
+
+Node* Linklist::searchtarget(int toFind)
+{
+    Node* temp = head;
+    while (temp != NULL)
+    {
+        if (temp->getData() == toFind)
+        {
+            return temp;
+        }
+        temp = temp->getNext();
+    }
+    return NULL;
+}
+
+void Linklist::insertAtTarget(int target, int value)
+{
+    if (isEmpty())
+    {
+        cout << "List is empty" << endl;
+        return;
+    }
+
+    Node* targetNode = searchtarget(target);
+    if (targetNode == NULL)
+    {
+        cout << "Not found" << endl;
+        return;
+    }
+
+
+    if (targetNode == tail)
+    {
+        insertAtTail(value);
+    }
+
+    else
+    {
+        Node* temp = new Node(value);
+        temp->setNext(targetNode->getNext());
+        temp->setPrev(targetNode);
+
+        if (targetNode->getNext() != NULL)
+        {
+            targetNode->getNext()->setPrev(temp);
+        }
+        targetNode->setNext(temp);
+    }
+}
+
+void Linklist::removeNode(int toRemove)
+{
+    Node* targetNode = head;
+    Node* prev = NULL;
+
+    while (targetNode != NULL)
+    {
+        if (targetNode->getData() == toRemove)
+        {
+            break;
+        }
+        else
+        {
+            prev = targetNode;
+            targetNode = targetNode->getNext();
+
+        }
+    }
+    if (targetNode == NULL)
+    {
+        cout << "NOT found" << endl;
+        return;
+    }
+    else
+    {
+        if (targetNode == head)
+        {
+            head = head->getNext();
+            targetNode->setNext(NULL); // yeh wali line delink kare giy
+            delete targetNode;
+        }
+        else if (targetNode == tail)
+        {
+            tail = prev;
+            tail->setNext(NULL);
+            delete targetNode;
+
+        }
+        else
+        {
+            prev->setNext(targetNode->getNext());
+            targetNode->setNext(NULL);
+            delete targetNode;
+
+        }
+    }
+
+}
+
+
+
+///////////////////////////// main.cpp ////////////////////////////
+
+
+#include <iostream>
+#include "Linklist.h"
+using namespace std;
+
+void displayMenu() {
+    cout << "\n--- Doubly Linked List Operations ---" << endl;
+    cout << "1. Insert at Head" << endl;
+    cout << "2. Insert at Tail" << endl;
+    cout << "3. Print List Forward " << endl;
+    cout << "4. Print List Backward " << endl;
+    cout << "5. Search for a Node" << endl;
+    cout << "6. Insert after a Target Node" << endl;
+    cout << "7. Remove a Node" << endl;
+    cout << "8. Exit" << endl;
+    cout << "Enter your choice: ";
+}
+
+int main() {
+    Linklist list1;
+    int choice, data, target, afterValue;
+
+    do {
+        displayMenu();
+        cin >> choice;
+
+        switch (choice) {
+        case 1:
+            cout << "Enter the value to insert at head: ";
+            cin >> data;
+            list1.insertAtHead(data);
+            cout << "Inserted " << data << " at the head." << endl;
+            break;
+
+        case 2:
+            cout << "Enter the value to insert at tail: ";
+            cin >> data;
+            list1.insertAtTail(data);
+            cout << "Inserted " << data << " at the tail." << endl;
+            break;
+
+        case 3:
+            cout << "List contents:" << endl;
+            list1.printForward();
+            break;
+
+        case 4:
+            cout << "List contents:" << endl;
+            list1.printBackward();
+            break;
+
+        case 5:
+            cout << "Enter the value to search for: ";
+            cin >> data;
+            if (list1.searchtarget(data)) {
+                cout << "Value " << data << " found in the list." << endl;
+            }
+            else {
+                cout << "Value " << data << " not found in the list." << endl;
+            }
+            break;
+
+        case 6:
+            cout << "Enter the target value after which to insert: ";
+            cin >> target;
+            cout << "Enter the value to insert: ";
+            cin >> data;
+            list1.insertAtTarget(target, data);
+            cout << "Inserted " << data << " after " << target << " if target was found." << endl;
+            break;
+
+        case 7:
+            cout << "Enter the value to remove: ";
+            cin >> data;
+            list1.removeNode(data);
+            cout << "Removed " << data << " if it existed in the list." << endl;
+            break;
+
+        case 8:
+            cout << "Exiting program. Goodbye!" << endl;
+            break;
+
+        default:
+            cout << "Invalid choice. Please try again." << endl;
+        }
+    } while (choice != 8);
+
+    return 0;
+}
