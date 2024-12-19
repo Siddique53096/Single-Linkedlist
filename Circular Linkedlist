@@ -1,0 +1,350 @@
+///////////////////////// Node.h /////////////////////////
+
+
+class Node
+{
+private:
+	int data;
+	Node* next;
+
+public:
+	Node();
+	Node(int);
+	void setData(int);
+	void setNext(Node*);
+	int getData();
+	Node* getNext();
+};
+
+
+
+////////////////////////// Linklist.h ////////////////////////
+
+
+#include"Node.h"
+
+class Linklist
+
+{
+private:
+	Node* head;
+	Node* tail;
+public:
+	Linklist(); // perametarice constructor bhi ho sakata ha ider lakin hum abhi defalut use kar rahe hai
+	bool isEmpty();
+	void insertAtHead(int);
+	void insertAtTail(int);
+	void display();
+	void insertAtTarget(int, int);
+	Node* searchtarget(int);
+	void removeNode(int);
+};
+
+
+
+/////////////////////////// implementation.h ////////////////////////////
+
+
+
+#include"Linklist.h"
+#include<iostream>
+
+using namespace std;
+//////////////////////////////////////////// Node Class ////////////////////////////////////////////
+
+Node::Node()
+{
+	data = -1;
+	next = NULL;
+
+
+}
+Node::Node(int data)
+{
+	this->data = data;
+	next = NULL;
+
+
+}
+void Node::setData(int Data)
+{
+	this->data = data;
+}
+void Node::setNext(Node* next)
+{
+	this->next = next;
+}
+
+int Node::getData() {
+
+	return data;
+}
+
+Node* Node::getNext() {
+
+	return next;
+}
+//...........................Link list imp.......................................
+
+Linklist::Linklist()
+{
+	head = NULL;
+	tail = NULL;
+
+}
+bool Linklist::isEmpty()
+{
+	if (head == NULL)
+	{
+		return true;
+
+	}
+	else
+	{
+		return false;
+
+	}
+
+}
+void Linklist::insertAtTail(int data)
+{
+	if (isEmpty())
+	{ // new banane ka liye
+		Node* temp = new Node(data);
+		head = temp;
+		tail = temp;
+		tail->setNext(head);
+	}
+	else
+	{ //insert karna ka liye
+		Node* temp = new Node(data);
+		tail->setNext(temp);
+		tail = temp;
+		tail->setNext(head);
+	}
+
+}
+void Linklist::insertAtHead(int data)
+{
+	if (isEmpty())
+	{
+		insertAtTail(data);
+	}
+	// create new node "Temp" in head
+	else
+	{
+		Node* temp = new Node(data);
+		temp->setNext(head);
+		head = temp;
+		tail->setNext(head);
+
+	}
+
+}
+void Linklist::display()
+{
+
+	if (isEmpty())
+	{
+		cout << "The linked list is empty." << endl;
+		return ;
+	}
+
+	Node* temp = head;
+
+	do
+	{
+		if (isEmpty())
+		{
+			cout << "list is empty :" << endl;
+			return;
+		}
+		else
+			cout << temp->getData() << "\t";
+		temp = temp->getNext();
+	} while (temp != head);
+
+}
+Node* Linklist::searchtarget(int toFind)
+{
+	Node* temp = head;
+	do
+	{
+		if (temp->getData() == toFind)
+		{
+			return temp;
+
+		}
+		temp = temp->getNext();
+	} while (temp != head);
+	return NULL;
+}
+void Linklist::insertAtTarget(int target, int value)
+{
+
+	if (isEmpty())
+
+	{
+		cout << "List is empty" << endl;
+		return;
+	}
+	else
+	{
+		Node* targetNode = searchtarget(target);
+		if (targetNode == NULL)
+		{
+			cout << "Not found" << endl;
+			return;
+		}
+		else
+		{
+			if (targetNode == tail)
+			{
+				insertAtTail(value);
+			}
+			else
+			{
+				Node* temp = new Node(value);
+				temp->setNext(targetNode->getNext());
+				targetNode->setNext(temp);
+			}
+		}
+	}
+
+}
+void Linklist::removeNode(int toRemove)
+{
+	Node* targetNode = head;
+	Node* prev = NULL;
+
+	while (targetNode != NULL)
+	{
+		if (targetNode->getData() == toRemove)
+		{
+			break;
+		}
+		else
+		{
+			prev = targetNode;
+			targetNode = targetNode->getNext();
+
+		}
+	}
+	if (targetNode == NULL)
+	{
+		cout << "NOT found" << endl;
+		return;
+	}
+	else
+	{
+		if (targetNode == head)
+		{
+			head = head->getNext();
+			targetNode->setNext(NULL); // yeh wali line delink kare giy
+			tail->setNext(head);
+			delete targetNode;
+		}
+		else if (targetNode == tail)
+		{
+			tail = prev;
+			tail->setNext(head);
+			delete targetNode;
+
+		}
+		else
+		{
+			prev->setNext(targetNode->getNext());
+			targetNode->setNext(NULL);
+			delete targetNode;
+
+		}
+	}
+
+}
+
+
+/////////////////////////////// main.h ///////////////////////////
+
+
+#include "Linklist.h"
+#include <iostream>
+using namespace std;
+
+void displayMenu() {
+    cout << "\n--- Circular Linked List Operations ---" << endl;
+    cout << "1. Insert at Head" << endl;
+    cout << "2. Insert at Tail" << endl;
+    cout << "3. Display List" << endl;
+    cout << "4. Search for a Node" << endl;
+    cout << "5. Insert after a Target Node" << endl;
+    cout << "6. Remove a Node" << endl;
+    cout << "7. Exit" << endl;
+    cout << "Enter your choice: ";
+}
+
+int main() {
+    Linklist list1;
+    int choice, data, target;
+
+    do {
+        displayMenu();
+        cin >> choice;
+
+        switch (choice) {
+        case 1:
+            cout << "Enter the value to insert at head: ";
+            cin >> data;
+            list1.insertAtHead(data);
+            cout << "Inserted " << data << " at the head." << endl;
+            break;
+
+        case 2:
+            cout << "Enter the value to insert at tail: ";
+            cin >> data;
+            list1.insertAtTail(data);
+            cout << "Inserted " << data << " at the tail." << endl;
+            break;
+
+        case 3:
+            cout << "Circular Linked List contents:" << endl;
+            list1.display();
+            break;
+
+        case 4:
+            cout << "Enter the value to search for: ";
+            cin >> data;
+            if (list1.searchtarget(data)) {
+                cout << "Value " << data << " found in the list." << endl;
+            }
+            else {
+                cout << "Value " << data << " not found in the list." << endl;
+            }
+            break;
+
+        case 5:
+            cout << "Enter the target value after which to insert: ";
+            cin >> target;
+            cout << "Enter the value to insert: ";
+            cin >> data;
+            list1.insertAtTarget(target, data);
+            cout << "Inserted " << data << " after " << target << " if target was found." << endl;
+            break;
+
+        case 6:
+            cout << "Enter the value to remove: ";
+            cin >> data;
+            list1.removeNode(data);
+            cout << "Removed " << data << " if it existed in the list." << endl;
+            break;
+
+        case 7:
+            cout << "Exiting program. Goodbye!" << endl;
+            break;
+
+        default:
+            cout << "Invalid choice. Please try again." << endl;
+        }
+    } while (choice != 7);
+
+    return 0;
+}
